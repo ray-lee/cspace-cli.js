@@ -1,0 +1,72 @@
+{
+  "name": "cspace-cli",
+  "version": "0.0.1",
+  "description": "CollectionSpace CLI",
+  "author": "Ray Lee",
+  "license": "ECL-2.0",
+  "keywords": [
+    "collectionspace",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ray-lee/cspace-cli.js.git"
+  },
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "build": "cross-env BABEL_ENV=cjs babel ./src -d lib",
+    "check": "npm run lint && npm run test && npm run coverage",
+    "clean": "rimraf lib coverage",
+    "coverage": "istanbul report --root coverage text && istanbul report --root coverage lcov",
+    "lint": "eslint src",
+    "prepare": "npm run clean && npm run build",
+    "test": "cross-env NODE_ENV=test nyc mocha --compilers js:babel-register --recursive test"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-istanbul": "^5.1.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "coveralls": "^3.0.2",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "rimraf": "^2.6.2"
+  },
+  "dependencies": {
+    "cspace-api": "^1.0.0",
+    "cspace-input": "^1.0.8",
+    "csv-parse": "^3.2.0",
+    "csv-stringify": "^4.3.1",
+    "form-data": "^2.3.3",
+    "inquirer": "^6.2.2",
+    "lodash": "^4.17.11",
+    "netrc": "^0.1.4",
+    "stream-transform": "^1.0.7",
+    "xml2js": "^0.4.19",
+    "yargs": "^12.0.2"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "reporter": [
+      "json"
+    ],
+    "report-dir": "./coverage/Node.js",
+    "sourceMap": false,
+    "instrument": false,
+    "cache": true
+  }
+}

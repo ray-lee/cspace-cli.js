@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "airbnb-base"
+  ],
+  "rules": {
+    // Using await in a loop allows for easy serialization of async calls to the CSpace services,
+    // in cases where many concurrent requests would place too much load on the server.
+    "no-await-in-loop": "off"
+  }
+}
