@@ -2,9 +2,11 @@ import util from 'util';
 
 const formatObject = (item, options = {}) => {
   const {
-    colors,
-    depth,
     format,
+    jscolor,
+    jsdepth,
+    jsmaxarraylen,
+    jsonindent,
   } = global.argv;
 
   if (typeof item === 'object') {
@@ -21,12 +23,13 @@ const formatObject = (item, options = {}) => {
     }
 
     if (format === 'json') {
-      return JSON.stringify(object);
+      return JSON.stringify(object, null, jsonindent);
     }
 
     return util.inspect(object, {
-      depth,
-      colors,
+      colors: jscolor,
+      depth: jsdepth,
+      maxArrayLength: jsmaxarraylen,
     });
   }
 
