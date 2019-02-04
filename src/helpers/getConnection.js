@@ -24,13 +24,14 @@ const getPropertyValue = (connName, property) => {
     if (value === true) {
       // The option was specified as a flag (with no value). Prompt.
 
-      return inquirer
-        .prompt([{
-          type: property === 'password' ? 'password' : 'input',
-          mask: true,
-          name: property,
-          message: `Enter ${connName || ''}${connName ? ' ' : ''}${property}:`,
-        }])
+      const prompt = inquirer.createPromptModule({ output: process.stderr });
+
+      return prompt([{
+        type: property === 'password' ? 'password' : 'input',
+        mask: true,
+        name: property,
+        message: `Enter ${connName || ''}${connName ? ' ' : ''}${property}:`,
+      }])
         .then(answers => answers[property]);
     }
 
