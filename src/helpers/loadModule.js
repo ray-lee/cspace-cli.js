@@ -1,7 +1,53 @@
 import fs from 'fs';
 import path from 'path';
+import requireFromString from 'require-from-string';
 
-export default (modulePath) => {
+export const loadModuleString = (moduleString, filename) => {
+  let exportObj;
+  let parseErr;
+
+  try {
+    exportObj = requireFromString(moduleString, filename);
+  } catch (err) {
+    parseErr = err;
+  }
+
+  if (
+    typeof exportObj === 'undefined'
+    || (typeof exportObj === 'object' && exportObj && Object.keys(exportObj).length === 0)
+  ) {
+    // The string may be raw JSON, or some other JavaScript that doesn't assign anything to
+    // module.exports. Try prepending 'module.exports='.
+
+    try {
+      exportObj = requireFromString(`module.exports=${moduleString}`);
+      parseErr = undefined;
+    } catch (err) {
+      // eslint-disable-line no-empty
+    }
+  }
+
+  if (parseErr) {
+    throw parseErr;
+  }
+
+  const type = typeof exportObj;
+
+  if (
+    !exportObj
+    || (type !== 'object' && type !== 'function')
+    || (type === 'object' && Object.keys(exportObj).length === 0)
+  ) {
+    const sourceName = (typeof filename === 'undefined') ? 'input' : filename;
+
+    // eslint-disable-next-line no-throw-literal
+    throw `No object or function (found ${exportObj === null ? 'null' : type}) in ${sourceName}`;
+  }
+
+  return exportObj;
+};
+
+export const loadModuleFile = (modulePath) => {
   const absModulePath = path.resolve(process.cwd(), modulePath);
 
   if (!fs.existsSync(absModulePath)) {
@@ -9,21 +55,7 @@ export default (modulePath) => {
     throw `File not found: ${modulePath}`;
   }
 
-  // eslint-disable-next-line global-require, import/no-dynamic-require
-  const exportObj = require(absModulePath);
+  const moduleString = fs.readFileSync(absModulePath, 'utf8');
 
-  if (!exportObj || !('default' in exportObj)) {
-    // eslint-disable-next-line no-throw-literal
-    throw `The file ${modulePath} does not have a default export`;
-  }
-
-  const defaultExport = exportObj.default;
-  const type = typeof defaultExport;
-
-  if (type !== 'object' && type !== 'function') {
-    // eslint-disable-next-line no-throw-literal
-    throw `The default export of ${modulePath} must be an object or a function (found ${type})`;
-  }
-
-  return defaultExport;
+  return loadModuleString(moduleString, modulePath);
 };

@@ -1,5 +1,5 @@
 import getConnection from '../helpers/getConnection';
-import loadModule from '../helpers/loadModule';
+import { loadModuleFile } from '../helpers/loadModule';
 import output from '../helpers/output';
 
 export default ({
@@ -21,7 +21,7 @@ export default ({
     let update;
 
     try {
-      update = loadModule(argv.updateFile);
+      update = loadModuleFile(argv.updateFile);
     } catch (err) {
       return Promise.reject(err);
     }

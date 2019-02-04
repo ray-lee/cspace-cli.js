@@ -7,7 +7,7 @@
  * cspace update groups/<csid> groupSparseDataObject.js
  */
 
- export default {
+module.exports = {
   document: {
     '@name': 'groups',
     'ns2:groups_common': {

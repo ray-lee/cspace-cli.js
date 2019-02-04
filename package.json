@@ -53,6 +53,7 @@
     "inquirer": "^6.2.2",
     "lodash": "^4.17.11",
     "netrc": "^0.1.4",
+    "require-from-string": "^2.0.2",
     "stream-transform": "^1.0.7",
     "xml2js": "^0.4.19",
     "yargs": "^12.0.2"

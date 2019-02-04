@@ -14,7 +14,7 @@
  * @param {Object} data The current record data
  * @return {Object} A sparse data object containing the new title
  */
-export default (data) => {
+module.exports = (data) => {
   const title = data.document['ns2:groups_common'].title;
   const countPattern = / (\d+)$/;
 
