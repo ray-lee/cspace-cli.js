@@ -1,9 +1,9 @@
 import getConnection from '../helpers/getConnection';
-import { loadModuleFile } from '../helpers/loadModule';
+import loadModule from '../helpers/loadModule';
 import output from '../helpers/output';
 
 export default ({
-  command: 'update <resource> <updateFile>',
+  command: 'update <resource> <dataFile>',
   describe: 'Update a resource.',
 
   builder: yargs => yargs
@@ -11,35 +11,26 @@ export default ({
       describe: 'The resource to update.',
       type: 'string',
     })
-    .positional('updateFile', {
-      describe: 'Path to a JavaScript file containing the update data or an update function.',
+    .positional('dataFile', {
+      describe: 'Path to a JavaScript file containing the data or a JavaScript function that returns the data.',
       type: 'string',
       normalize: true,
     }),
 
-  handler: (argv) => {
-    let update;
-
-    try {
-      update = loadModuleFile(argv.updateFile);
-    } catch (err) {
-      return Promise.reject(err);
-    }
-
-    return getConnection()
+  handler: argv => loadModule(argv.dataFile)
+    .then(updateData => getConnection()
       .then((cspace) => {
-        if (typeof update === 'function') {
+        if (typeof updateData === 'function') {
           return cspace.read(argv.resource)
             .then(response => cspace.update(argv.resource, {
-              data: update(response.data),
+              data: updateData(response.data),
             }));
         }
 
         return cspace.update(argv.resource, {
-          data: update,
+          data: updateData,
         });
       })
       .then(response => output.printResponse(response))
-      .catch(error => output.errorResponse(error.response));
-  },
+      .catch(error => output.errorResponse(error))),
 });

@@ -42,7 +42,7 @@ const print = (item, options) => {
 };
 
 const printResponse = (response) => {
-  print(response, global.argv.verbose ? undefined : { omitKeys: ['headers'] });
+  print(response, global.argv.headers ? undefined : { omitKeys: ['headers'] });
 };
 
 const verbose = (item, options) => {
@@ -56,8 +56,12 @@ const error = (item, options) => {
   console.error(formatObject(item, options));
 };
 
-const errorResponse = (response) => {
-  error(response, global.argv.verbose ? undefined : { omitKeys: ['headers'] });
+const errorResponse = (err) => {
+  if (err.response) {
+    error(err.response, global.argv.verbose ? undefined : { omitKeys: ['headers'] });
+  } else {
+    error(err);
+  }
 };
 
 export default {

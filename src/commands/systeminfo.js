@@ -8,5 +8,5 @@ export default ({
   handler: () => getConnection({ authRequired: false })
     .then(cspace => cspace.read('systeminfo'))
     .then(response => output.printResponse(response))
-    .catch(error => output.errorResponse(error.response)),
+    .catch(error => output.errorResponse(error)),
 });

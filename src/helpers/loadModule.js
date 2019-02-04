@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import requireFromString from 'require-from-string';
 
-export const loadModuleString = (moduleString, filename) => {
+const loadModuleString = (moduleString, filename) => {
   let exportObj;
   let parseErr;
 
@@ -28,7 +28,7 @@ export const loadModuleString = (moduleString, filename) => {
   }
 
   if (parseErr) {
-    throw parseErr;
+    return Promise.reject(parseErr);
   }
 
   const type = typeof exportObj;
@@ -40,22 +40,30 @@ export const loadModuleString = (moduleString, filename) => {
   ) {
     const sourceName = (typeof filename === 'undefined') ? 'input' : filename;
 
-    // eslint-disable-next-line no-throw-literal
-    throw `No object or function (found ${exportObj === null ? 'null' : type}) in ${sourceName}`;
+    // eslint-disable-next-line prefer-promise-reject-errors
+    return Promise.reject(`No object or function (found ${exportObj === null ? 'null' : type}) in ${sourceName}`);
   }
 
-  return exportObj;
+  return Promise.resolve(exportObj);
 };
 
-export const loadModuleFile = (modulePath) => {
+const loadModuleFile = (modulePath) => {
   const absModulePath = path.resolve(process.cwd(), modulePath);
 
   if (!fs.existsSync(absModulePath)) {
-    // eslint-disable-next-line no-throw-literal
-    throw `File not found: ${modulePath}`;
+    // eslint-disable-next-line prefer-promise-reject-errors
+    return Promise.reject(`File not found: ${modulePath}`);
   }
 
   const moduleString = fs.readFileSync(absModulePath, 'utf8');
 
   return loadModuleString(moduleString, modulePath);
+};
+
+export default (modulePath) => {
+  // if (modulePath === '-') {
+  //   return loadModuleStream();
+  // }
+
+  return loadModuleFile(modulePath);
 };

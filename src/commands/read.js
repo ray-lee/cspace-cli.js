@@ -14,5 +14,5 @@ export default ({
   handler: argv => getConnection()
     .then(cspace => cspace.read(argv.resource))
     .then(response => output.printResponse(response))
-    .catch(error => output.errorResponse(error.response)),
+    .catch(error => output.errorResponse(error)),
 });

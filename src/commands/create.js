@@ -12,7 +12,7 @@ export default ({
       type: 'string',
     })
     .positional('dataFile', {
-      describe: 'Path to a JavaScript file containing the data.',
+      describe: 'Path to a JavaScript file containing the data, or a JavaScript function that returns the data.',
       type: 'string',
       normalize: true,
     })
@@ -23,19 +23,12 @@ export default ({
       default: false,
     }),
 
-  handler: (argv) => {
-    let data;
-
-    try {
-      data = loadModule(argv.dataFile);
-    } catch (err) {
-      return Promise.reject(err);
-    }
-
-    return getConnection()
-      .then(cspace => cspace.create(argv.resource, { data })
+  handler: argv => loadModule(argv.dataFile)
+    .then(createData => getConnection()
+      .then(cspace => cspace.create(argv.resource, {
+        data: (typeof createData === 'function') ? createData() : createData,
+      })
         .then(response => (argv.follow ? cspace.read(response.headers.location) : response)))
       .then(response => output.printResponse(response))
-      .catch(error => output.errorResponse(error.response));
-  },
+      .catch(error => output.errorResponse(error))),
 });

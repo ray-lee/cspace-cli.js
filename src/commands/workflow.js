@@ -18,5 +18,5 @@ export default ({
   handler: argv => getConnection()
     .then(cspace => cspace.update(`${argv.resource}/workflow/${argv.transition}`))
     .then(response => output.printResponse(response))
-    .catch(error => output.errorResponse(error.response)),
+    .catch(error => output.errorResponse(error)),
 });

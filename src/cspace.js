@@ -1,6 +1,7 @@
 import yargs from 'yargs';
 import create from './commands/create';
 import deleteCommand from './commands/delete';
+import find from './commands/find';
 import read from './commands/read';
 import systeminfo from './commands/systeminfo';
 import update from './commands/update';
@@ -9,19 +10,21 @@ import workflow from './commands/workflow';
 yargs
   .command(create)
   .command(deleteCommand)
+  .command(find)
   .command(read)
   .command(systeminfo)
   .command(update)
   .command(workflow)
 
-  .group(['url', 'username', 'password'], 'Connection Options:')
+  .group(['url', 'login', 'password'], 'Connection Options:')
 
   .option('url', {
-    describe: 'URL of the CollectionSpace service.',
-  })
-  .option('username', {
     alias: 'u',
-    describe: 'Username (email) of the CollectionSpace user.',
+    describe: 'URL of the CollectionSpace service. Typically ends with /cspace-services, e.g. https://nightly.collectionspace.org/cspace-services.',
+  })
+  .option('login', {
+    alias: 'l',
+    describe: 'Login name (email) of the CollectionSpace user.',
   })
   .option('password', {
     alias: 'p',
@@ -30,6 +33,18 @@ yargs
 
   .group(['format', 'jscolor', 'jsdepth', 'jsmaxarraylen', 'jsonindent', 'verbose'], 'Output Options:')
 
+  .option('verbose', {
+    alias: 'v',
+    describe: 'Print verbose messages.',
+    type: 'boolean',
+    default: false,
+  })
+  .option('headers', {
+    alias: 'h',
+    describe: 'Print headers of API responses.',
+    type: 'boolean',
+    default: false,
+  })
   .option('format', {
     alias: 'f',
     describe: 'Format to use when printing data. Use js (the default) to print data as JavaScript object/array literals, for human readability or copying into JS programs. Use json to print data as JSON, for use by other programs.',
@@ -56,14 +71,11 @@ yargs
     type: 'number',
     default: 0,
   })
-  .option('verbose', {
-    alias: 'v',
-    describe: 'Print verbose messages.',
-    type: 'boolean',
-    default: false,
-  })
 
   .demandCommand(1, 1, 'Specify a command.', 'Too many commands.')
   .strict()
-  .middleware([(argv) => { global.argv = argv; }])
+  .middleware([
+    // Set the parsed argv into a global, so it doesn't have to be passed everywhere.
+    (argv) => { global.argv = argv; },
+  ])
   .parse();
