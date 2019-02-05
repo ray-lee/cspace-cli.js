@@ -17,10 +17,10 @@ export default ({
     }),
 
   handler: (argv) => {
-    return loadModule(argv.paramsFile);
-    // return getConnection()
-    //   .then(cspace => cspace.read(argv.resource))
-    //   .then(response => output.printResponse(response))
-    //   .catch(error => output.errorResponse(error));
+    return loadModule(argv.paramsFile)
+      .then(searchParams => getConnection()
+        .then(cspace => cspace.read(argv.resource, { params: searchParams })))
+      .then(response => output.printResponse(response))
+      .catch(error => output.errorResponse(error));
   },
 });
