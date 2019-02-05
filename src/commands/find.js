@@ -1,4 +1,5 @@
 import getConnection from '../helpers/getConnection';
+import loadModule from '../helpers/loadModule';
 import output from '../helpers/output';
 
 export default ({
@@ -11,15 +12,15 @@ export default ({
       type: 'string',
     })
     .positional('paramsFile', {
-      describe: 'A JavaScript file containing the search parameters. Use - to read from standard input.',
+      describe: 'A JavaScript file containing the search parameters. If not provided, read from standard input.',
       type: 'string',
-      default: '-',
     }),
 
   handler: (argv) => {
-    return getConnection()
-      .then(cspace => cspace.read(argv.resource))
-      .then(response => output.printResponse(response))
-      .catch(error => output.errorResponse(error));
+    return loadModule(argv.paramsFile);
+    // return getConnection()
+    //   .then(cspace => cspace.read(argv.resource))
+    //   .then(response => output.printResponse(response))
+    //   .catch(error => output.errorResponse(error));
   },
 });

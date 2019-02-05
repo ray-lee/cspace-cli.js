@@ -7,11 +7,11 @@ export default ({
 
   builder: yargs => yargs
     .positional('transition', {
-      describe: 'The name of the workflow state transition.',
+      describe: 'The name of the workflow state transition, e.g. delete, undelete',
       type: 'string',
     })
     .positional('resource', {
-      describe: 'The resource to read.',
+      describe: 'The resource to transition.',
       type: 'string',
     }),
 

@@ -1,6 +1,26 @@
 import fs from 'fs';
 import path from 'path';
+import inquirer from 'inquirer';
+import getStdin from 'get-stdin';
 import requireFromString from 'require-from-string';
+
+const isValidExport = (exportObj) => {
+  if (exportObj === null) {
+    return false;
+  }
+
+  const type = typeof exportObj;
+
+  if (type === 'object' || type === 'function') {
+    return true;
+  }
+
+  return false;
+};
+
+const isEmptyObject = obj => (
+  obj && typeof obj === 'object' && Object.keys(obj).length === 0
+);
 
 const loadModuleString = (moduleString, filename) => {
   let exportObj;
@@ -12,18 +32,22 @@ const loadModuleString = (moduleString, filename) => {
     parseErr = err;
   }
 
-  if (
-    typeof exportObj === 'undefined'
-    || (typeof exportObj === 'object' && exportObj && Object.keys(exportObj).length === 0)
-  ) {
+  if (parseErr || !isValidExport(exportObj) || isEmptyObject(exportObj)) {
     // The string may be raw JSON, or some other JavaScript that doesn't assign anything to
     // module.exports. Try prepending 'module.exports='.
 
+    let retryExportObj;
+    let retryParseErr;
+
     try {
-      exportObj = requireFromString(`module.exports=${moduleString}`);
-      parseErr = undefined;
+      retryExportObj = requireFromString(`module.exports=${moduleString}`);
     } catch (err) {
-      // eslint-disable-line no-empty
+      retryParseErr = err;
+    }
+
+    if (!retryParseErr && isValidExport(retryExportObj)) {
+      exportObj = retryExportObj;
+      parseErr = retryParseErr;
     }
   }
 
@@ -31,14 +55,9 @@ const loadModuleString = (moduleString, filename) => {
     return Promise.reject(parseErr);
   }
 
-  const type = typeof exportObj;
-
-  if (
-    !exportObj
-    || (type !== 'object' && type !== 'function')
-    || (type === 'object' && Object.keys(exportObj).length === 0)
-  ) {
+  if (!isValidExport(exportObj)) {
     const sourceName = (typeof filename === 'undefined') ? 'input' : filename;
+    const type = typeof exportObj;
 
     // eslint-disable-next-line prefer-promise-reject-errors
     return Promise.reject(`No object or function (found ${exportObj === null ? 'null' : type}) in ${sourceName}`);
@@ -60,10 +79,25 @@ const loadModuleFile = (modulePath) => {
   return loadModuleString(moduleString, modulePath);
 };
 
-export default (modulePath) => {
-  // if (modulePath === '-') {
-  //   return loadModuleStream();
-  // }
+const loadModuleFromStdin = () => {
+  let readModule;
 
-  return loadModuleFile(modulePath);
-};
+  if (process.stdin.isTTY) {
+    const prompt = inquirer.createPromptModule({ output: process.stderr });
+
+    readModule = prompt([{
+      type: 'editor',
+      name: 'params',
+      message: 'Enter search parameters as JSON or a JavaScript object literal.',
+    }])
+      .then(answers => answers.params)
+  } else {
+    readModule = getStdin();
+  }
+
+  return readModule.then(moduleString => loadModuleString(moduleString));
+}
+
+export default modulePath => (
+  (typeof modulePath === 'undefined') ? loadModuleFromStdin() : loadModuleFile(modulePath)
+);

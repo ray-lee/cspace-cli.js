@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "cspace-api": "^1.0.0",
+    "get-stdin": "^6.0.0",
     "inquirer": "^6.2.2",
     "lodash": "^4.17.11",
     "netrc": "^0.1.4",

@@ -12,7 +12,7 @@ export default ({
       type: 'string',
     })
     .positional('dataFile', {
-      describe: 'Path to a JavaScript file containing the data or a JavaScript function that returns the data.',
+      describe: 'Path to a JavaScript file containing the record data or a JavaScript function that returns the data.',
       type: 'string',
       normalize: true,
     }),
