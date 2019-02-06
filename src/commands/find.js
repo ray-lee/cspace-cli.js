@@ -16,11 +16,9 @@ export default ({
       type: 'string',
     }),
 
-  handler: (argv) => {
-    return loadModule(argv.paramsFile)
-      .then(searchParams => getConnection()
-        .then(cspace => cspace.read(argv.resource, { params: searchParams })))
-      .then(response => output.printResponse(response))
-      .catch(error => output.errorResponse(error));
-  },
+  handler: argv => loadModule(argv.paramsFile)
+    .then(searchParams => getConnection()
+      .then(cspace => cspace.read(argv.resource, { params: searchParams })))
+    .then(response => output.printResponse(response))
+    .catch(error => output.errorResponse(error)),
 });

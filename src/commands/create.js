@@ -3,7 +3,7 @@ import loadModule from '../helpers/loadModule';
 import output from '../helpers/output';
 
 export default ({
-  command: 'create <resource> <dataFile>',
+  command: 'create <resource> <datafile>',
   describe: 'Create a resource.',
 
   builder: yargs => yargs
@@ -11,7 +11,7 @@ export default ({
       describe: 'The resource to create.',
       type: 'string',
     })
-    .positional('dataFile', {
+    .positional('datafile', {
       describe: 'Path to a JavaScript file containing the record data, or a JavaScript function that returns the data.',
       type: 'string',
       normalize: true,
@@ -23,7 +23,7 @@ export default ({
       default: false,
     }),
 
-  handler: argv => loadModule(argv.dataFile)
+  handler: argv => loadModule(argv.datafile)
     .then(createData => getConnection()
       .then(cspace => cspace.create(argv.resource, {
         data: (typeof createData === 'function') ? createData() : createData,

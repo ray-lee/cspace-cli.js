@@ -1,4 +1,5 @@
 import yargs from 'yargs';
+import bulkUpdate from './commands/bulk-update';
 import create from './commands/create';
 import deleteCommand from './commands/delete';
 import find from './commands/find';
@@ -8,6 +9,7 @@ import update from './commands/update';
 import workflow from './commands/workflow';
 
 yargs
+  .command(bulkUpdate)
   .command(create)
   .command(deleteCommand)
   .command(find)

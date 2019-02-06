@@ -90,13 +90,13 @@ const loadModuleFromStdin = () => {
       name: 'params',
       message: 'Enter search parameters as JSON or a JavaScript object literal.',
     }])
-      .then(answers => answers.params)
+      .then(answers => answers.params);
   } else {
     readModule = getStdin();
   }
 
   return readModule.then(moduleString => loadModuleString(moduleString));
-}
+};
 
 export default modulePath => (
   (typeof modulePath === 'undefined') ? loadModuleFromStdin() : loadModuleFile(modulePath)
