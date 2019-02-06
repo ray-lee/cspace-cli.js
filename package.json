@@ -17,6 +17,9 @@
     "lib",
     "src"
   ],
+  "bin": {
+    "cspace": "bin/cspace"
+  },
   "scripts": {
     "build": "cross-env BABEL_ENV=cjs babel ./src -d lib",
     "check": "npm run lint && npm run test && npm run coverage",
