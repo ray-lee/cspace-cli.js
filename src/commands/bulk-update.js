@@ -9,9 +9,9 @@ const bulkUpdate = (cspace, resource, controller) => {
     update,
   } = controller;
 
-  if (!search || typeof search !== 'object') {
+  if (typeof search !== 'undefined' && typeof search !== 'object') {
     // eslint-disable-next-line prefer-promise-reject-errors
-    return Promise.reject('Search parameters not found');
+    return Promise.reject('Search parameters must be an object');
   }
 
   if (!update || (typeof update !== 'object' && typeof update !== 'function')) {
