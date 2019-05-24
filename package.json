@@ -2,7 +2,7 @@
   "name": "cspace-cli",
   "version": "0.0.1",
   "description": "CollectionSpace CLI",
-  "author": "Ray Lee",
+  "author": "Ray Lee <ray.lee@lyrasis.org>",
   "license": "ECL-2.0",
   "keywords": [
     "collectionspace",
@@ -27,14 +27,14 @@
     "coverage": "istanbul report --root coverage text && istanbul report --root coverage lcov",
     "lint": "eslint src",
     "prepare": "npm run clean && npm run build",
-    "test": "cross-env NODE_ENV=test nyc mocha --compilers js:babel-register --recursive test"
+    "test": "cross-env NODE_ENV=test nyc mocha --require @babel/register --recursive test"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-plugin-istanbul": "^5.1.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0",
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/register": "^7.4.0",
+    "babel-plugin-istanbul": "^5.1.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "coveralls": "^3.0.2",
@@ -44,7 +44,7 @@
     "eslint-plugin-import": "^2.14.0",
     "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
-    "nyc": "^13.1.0",
+    "nyc": "^14.1.1",
     "rimraf": "^2.6.2"
   },
   "dependencies": {
